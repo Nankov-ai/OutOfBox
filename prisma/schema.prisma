@@ -29,7 +29,7 @@ model User {
 
   // NextAuth fields
   accounts Account[]
-  sessions_auth Session_Auth[]
+  sessions_auth Session[]
 }
 
 // NextAuth adapter models
@@ -52,13 +52,15 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-model Session_Auth {
+model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("auth_sessions")
 }
 
 model VerificationToken {
