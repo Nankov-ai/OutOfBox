@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import { Send, Loader2 } from 'lucide-react'
+import { Send, Loader2, Mic, MicOff, Volume2, VolumeX } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type Message = { id: string; role: 'USER' | 'ASSISTANT'; content: string; createdAt?: Date | string }
@@ -17,11 +17,58 @@ export default function ChatWindow({
   const [messages, setMessages] = useState<Message[]>(session.messages)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [listening, setListening] = useState(false)
+  const [speaking, setSpeaking] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
+
+  // Speech-to-text
+  function toggleMic() {
+    if (listening) {
+      recognitionRef.current?.stop()
+      setListening(false)
+      return
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) return
+
+    const recognition = new SpeechRecognition()
+    recognition.lang = locale === 'en' ? 'en-US' : 'pt-PT'
+    recognition.continuous = false
+    recognition.interimResults = false
+
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript
+      setInput(prev => prev ? prev + ' ' + transcript : transcript)
+    }
+    recognition.onend = () => setListening(false)
+    recognition.onerror = () => setListening(false)
+
+    recognitionRef.current = recognition
+    recognition.start()
+    setListening(true)
+  }
+
+  // Text-to-speech
+  function toggleSpeak(msgId: string, text: string) {
+    if (speaking === msgId) {
+      window.speechSynthesis.cancel()
+      setSpeaking(null)
+      return
+    }
+    window.speechSynthesis.cancel()
+    const utter = new SpeechSynthesisUtterance(text)
+    utter.lang = locale === 'en' ? 'en-US' : 'pt-PT'
+    utter.onend = () => setSpeaking(null)
+    utter.onerror = () => setSpeaking(null)
+    window.speechSynthesis.speak(utter)
+    setSpeaking(msgId)
+  }
 
   async function handleSend() {
     if (!input.trim() || loading) return
@@ -81,7 +128,16 @@ export default function ChatWindow({
                 : 'bg-[#111827] border border-[#1F2937] text-slate-200 rounded-bl-sm'
             )}>
               {msg.role === 'ASSISTANT' && (
-                <div className="text-amber-400 text-xs font-semibold mb-2 uppercase tracking-wider">OutOfBox</div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-amber-400 text-xs font-semibold uppercase tracking-wider">OutOfBox</span>
+                  <button
+                    onClick={() => toggleSpeak(msg.id, msg.content)}
+                    className="text-slate-500 hover:text-amber-400 transition ml-3"
+                    title={speaking === msg.id ? 'Parar' : 'Ouvir'}
+                  >
+                    {speaking === msg.id ? <VolumeX size={13} /> : <Volume2 size={13} />}
+                  </button>
+                </div>
               )}
               <p className="whitespace-pre-wrap">{msg.content}</p>
             </div>
@@ -102,6 +158,18 @@ export default function ChatWindow({
 
       <div className="p-4 border-t border-[#1F2937]">
         <div className="flex gap-2 items-end">
+          <button
+            onClick={toggleMic}
+            className={cn(
+              'p-3 rounded-xl transition shrink-0',
+              listening
+                ? 'bg-red-600 hover:bg-red-500 animate-pulse'
+                : 'bg-[#111827] border border-[#1F2937] hover:border-purple-500 text-slate-400 hover:text-purple-400'
+            )}
+            title={listening ? 'Parar gravação' : 'Falar'}
+          >
+            {listening ? <MicOff size={16} /> : <Mic size={16} />}
+          </button>
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}
