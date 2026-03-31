@@ -3,6 +3,21 @@ import { useState, useRef, useEffect } from 'react'
 import { Send, Loader2, Mic, MicOff, Volume2, VolumeX } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+type SpeechRecognitionEvent = Event & { results: SpeechRecognitionResultList }
+type SpeechRecognitionInstance = {
+  lang: string; continuous: boolean; interimResults: boolean
+  onresult: ((e: SpeechRecognitionEvent) => void) | null
+  onend: (() => void) | null
+  onerror: (() => void) | null
+  start: () => void; stop: () => void
+}
+declare global {
+  interface Window {
+    SpeechRecognition: new () => SpeechRecognitionInstance
+    webkitSpeechRecognition: new () => SpeechRecognitionInstance
+  }
+}
+
 type Message = { id: string; role: 'USER' | 'ASSISTANT'; content: string; createdAt?: Date | string }
 type Session = { id: string; messages: Message[] }
 
@@ -20,7 +35,7 @@ export default function ChatWindow({
   const [listening, setListening] = useState(false)
   const [speaking, setSpeaking] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
