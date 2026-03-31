@@ -1,3 +1,17 @@
-export default function JournalPage() {
-  return <div className="p-6 text-slate-400">Journal — coming in Phase 2</div>
+import { auth } from '@/lib/auth'
+import { db } from '@/lib/db'
+import { redirect } from 'next/navigation'
+import JournalClient from '@/components/journal/JournalClient'
+
+export default async function JournalPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const session = await auth()
+  if (!session?.user?.id) redirect(`/${locale}/login`)
+
+  const entries = await db.journalEntry.findMany({
+    where: { userId: session.user.id },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  return <JournalClient entries={entries} locale={locale} />
 }
