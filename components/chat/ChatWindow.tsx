@@ -37,13 +37,17 @@ export default function ChatWindow({
         body: JSON.stringify({ sessionId: session.id, userMessage: input, locale }),
       })
       const data = await res.json()
+      if (!res.ok || !data.content) throw new Error(data.error || 'No content')
       setMessages(prev => [
         ...prev,
         { id: crypto.randomUUID(), role: 'ASSISTANT', content: data.content }
       ])
-    } catch {
-      setMessages(prev => prev.filter(m => m.id !== userMsg.id))
-      setInput(input)
+    } catch (e) {
+      console.error('Reflect error:', e)
+      setMessages(prev => [
+        ...prev,
+        { id: crypto.randomUUID(), role: 'ASSISTANT', content: '⚠️ Erro ao obter resposta. Tenta novamente.' }
+      ])
     } finally {
       setLoading(false)
     }
