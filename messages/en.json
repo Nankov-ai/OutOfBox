@@ -1,0 +1,39 @@
+{
+  "nav": {
+    "chat": "Reflect",
+    "journal": "Journal",
+    "dashboard": "Progress",
+    "checkin": "Check-in",
+    "settings": "Settings"
+  },
+  "chat": {
+    "placeholder": "Share what's on your mind...",
+    "send": "Send",
+    "newSession": "New Reflection",
+    "emptyTitle": "Start your journey",
+    "emptyDesc": "Write a thought, obstacle or frustration. The app will return the right questions.",
+    "thinking": "Reflecting..."
+  },
+  "auth": {
+    "loginTitle": "Welcome to OutOfBox",
+    "loginSubtitle": "Your growth journey starts here.",
+    "continueGoogle": "Continue with Google",
+    "continueEmail": "Continue with Email",
+    "emailPlaceholder": "Your email",
+    "checkEmail": "Check your email for the access link."
+  },
+  "checkin": {
+    "questions": [
+      "What situation in your life is currently challenging you and what might it be trying to teach you?",
+      "If your future self looked back at today, what strength is being built right now?",
+      "What part of you is growing precisely because of the obstacle you face now?",
+      "How can you turn your biggest current frustration into an advantage?",
+      "What small, courageous decision can you make today to move one step forward?",
+      "What is this challenge forcing you to learn about yourself?",
+      "If this moment were a blessing in disguise, what would the disguise be and what would the blessing be?",
+      "What limiting belief is behind the resistance you feel right now?",
+      "Who do you need to become to overcome what you are facing?",
+      "What small victory did you achieve this week that deserves to be celebrated?"
+    ]
+  }
+}

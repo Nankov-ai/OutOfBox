@@ -1,0 +1,39 @@
+{
+  "nav": {
+    "chat": "Reflexão",
+    "journal": "Diário",
+    "dashboard": "Progresso",
+    "checkin": "Check-in",
+    "settings": "Definições"
+  },
+  "chat": {
+    "placeholder": "Partilha o que tens na mente...",
+    "send": "Enviar",
+    "newSession": "Nova Reflexão",
+    "emptyTitle": "Começa a tua jornada",
+    "emptyDesc": "Escreve um pensamento, obstáculo ou desabafo. A app vai devolver-te as perguntas certas.",
+    "thinking": "A refletir..."
+  },
+  "auth": {
+    "loginTitle": "Bem-vindo ao OutOfBox",
+    "loginSubtitle": "A tua jornada de crescimento começa aqui.",
+    "continueGoogle": "Continuar com Google",
+    "continueEmail": "Continuar com Email",
+    "emailPlaceholder": "O teu email",
+    "checkEmail": "Verifica o teu email para o link de acesso."
+  },
+  "checkin": {
+    "questions": [
+      "Que situação na tua vida está atualmente a desafiar-te e o que ela pode estar a tentar ensinar-te?",
+      "Se o teu eu do futuro olhasse para hoje, que força estaria a ser construída neste momento difícil?",
+      "Que parte de ti está a crescer precisamente por causa do obstáculo que enfrentas agora?",
+      "De que forma podes transformar a tua maior frustração atual numa vantagem?",
+      "Que decisão pequena e corajosa podes tomar hoje para avançar um passo?",
+      "O que é que este desafio te está a forçar a aprender sobre ti próprio?",
+      "Se este momento fosse uma bênção disfarçada, qual seria o disfarce e qual seria a bênção?",
+      "Que crença limitante está por trás da resistência que sentes agora?",
+      "Quem precisas de te tornar para ultrapassar o que estás a enfrentar?",
+      "Que vitória pequena conseguiste esta semana que merece ser celebrada?"
+    ]
+  }
+}
