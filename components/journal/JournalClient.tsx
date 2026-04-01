@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
 import { pt, enUS } from 'date-fns/locale'
-import { Plus, Trash2, Save } from 'lucide-react'
+import { Plus, Trash2, Save, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type Entry = { id: string; title: string | null; content: string; mood: number | null; createdAt: Date | string }
@@ -78,10 +78,17 @@ export default function JournalClient({ entries: initial, locale }: { entries: E
     empty: locale === 'en' ? 'No entries yet. Start writing.' : 'Ainda sem entradas. Começa a escrever.',
   }
 
+  // On mobile: show list or editor, not both
+  const showEditor = isNew || selected !== null
+
   return (
     <div className="flex h-full">
-      {/* Sidebar */}
-      <div className="w-64 shrink-0 border-r border-[#1F2937] flex flex-col">
+      {/* Sidebar — hidden on mobile when editor is open */}
+      <div className={cn(
+        'border-r border-[#1F2937] flex flex-col',
+        'w-full md:w-64 md:shrink-0',
+        showEditor ? 'hidden md:flex' : 'flex'
+      )}>
         <div className="p-3 border-b border-[#1F2937]">
           <button onClick={openNew} className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-sm font-medium transition">
             <Plus size={15} /> {labels.newEntry}
@@ -104,10 +111,19 @@ export default function JournalClient({ entries: initial, locale }: { entries: E
         </div>
       </div>
 
-      {/* Editor */}
-      <div className="flex-1 flex flex-col p-6 max-w-2xl mx-auto w-full">
+      {/* Editor — hidden on mobile when list is showing */}
+      <div className={cn(
+        'flex-col p-6 max-w-2xl mx-auto w-full',
+        showEditor ? 'flex' : 'hidden md:flex'
+      )}>
         {(isNew || selected) ? (
           <>
+            <button
+              onClick={() => { setSelected(null); setIsNew(false) }}
+              className="md:hidden flex items-center gap-1 text-slate-400 text-sm mb-4"
+            >
+              <ArrowLeft size={15} /> {locale === 'en' ? 'Back' : 'Voltar'}
+            </button>
             <input
               value={title}
               onChange={e => setTitle(e.target.value)}
