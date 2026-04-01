@@ -42,13 +42,19 @@ Tone: close, direct, no condescension. Like a mentor who genuinely believes in t
 
 export async function getReflectionQuestions(
   userMessage: string,
-  locale: string = 'pt'
+  locale: string = 'pt',
+  userContext?: string | null
 ): Promise<string> {
   const systemPrompt = locale === 'en' ? SYSTEM_PROMPT_EN : SYSTEM_PROMPT_PT
+  const contextBlock = userContext
+    ? (locale === 'en'
+        ? `\n\nContext about this person from previous sessions:\n${userContext}\n\nUse this to make your questions more personal and relevant.`
+        : `\n\nContexto sobre esta pessoa de sessões anteriores:\n${userContext}\n\nUsa isto para tornar as tuas perguntas mais pessoais e relevantes.`)
+    : ''
 
   const model = genAI.getGenerativeModel({
     model: 'gemini-2.5-flash',
-    systemInstruction: systemPrompt,
+    systemInstruction: systemPrompt + contextBlock,
   })
 
   const result = await model.generateContent(userMessage)
@@ -64,4 +70,31 @@ export async function getReflectionQuestions(
   }
 
   return text
+}
+
+export async function extractInsights(
+  messages: { role: string; content: string }[],
+  locale: string = 'pt'
+): Promise<string> {
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+  const conversation = messages.map(m => `${m.role === 'USER' ? 'Person' : 'Coach'}: ${m.content}`).join('\n\n')
+  const prompt = locale === 'en'
+    ? `Analyze this coaching conversation and extract 2-4 key psychological patterns, recurring themes, fears, or beliefs expressed by the person. Be concise and specific. Write as a brief list, no headers, no bullet symbols, just plain text separated by semicolons.\n\nConversation:\n${conversation}`
+    : `Analisa esta conversa de coaching e extrai 2-4 padrões psicológicos chave, temas recorrentes, medos ou crenças expressos pela pessoa. Sê conciso e específico. Escreve como uma lista breve, sem cabeçalhos, sem símbolos de lista, apenas texto simples separado por ponto e vírgula.\n\nConversa:\n${conversation}`
+
+  const result = await model.generateContent(prompt)
+  return result.response.text().trim()
+}
+
+export async function generateWeeklySummary(
+  insights: string[],
+  locale: string = 'pt'
+): Promise<string> {
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+  const prompt = locale === 'en'
+    ? `Based on these themes from a person's reflection sessions this week, write a short, warm weekly summary (3-4 sentences). Highlight patterns, acknowledge growth, and end with one forward-looking question. Tone: like a mentor who has been watching closely.\n\nThemes:\n${insights.join('\n')}`
+    : `Com base nestes temas das sessões de reflexão desta pessoa esta semana, escreve um resumo semanal curto e caloroso (3-4 frases). Destaca padrões, reconhece o crescimento e termina com uma pergunta orientada para o futuro. Tom: como um mentor que tem estado a observar de perto.\n\nTemas:\n${insights.join('\n')}`
+
+  const result = await model.generateContent(prompt)
+  return result.response.text().trim()
 }

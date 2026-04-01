@@ -75,7 +75,8 @@ model VerificationToken {
 model ChatSession {
   id        String   @id @default(cuid())
   userId    String
-  title     String?  // auto-generated from first message excerpt
+  title     String?
+  insights  String?  @db.Text // key themes/patterns extracted by AI
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
