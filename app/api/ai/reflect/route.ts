@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
-import { getReflectionQuestions, extractInsights } from '@/lib/gemini'
+import { getReflectionQuestions, getGrowthPlanResponse, extractInsights } from '@/lib/gemini'
 import { updateStreak } from '@/lib/streak'
 import { z } from 'zod'
 
@@ -38,7 +38,16 @@ export async function POST(req: NextRequest) {
 
   await db.chatMessage.create({ data: { sessionId, role: 'USER', content: userMessage } })
 
-  const aiContent = await getReflectionQuestions(userMessage, locale, userContext)
+  let aiContent: string
+  if (chatSession.type === 'GROWTH_PLAN') {
+    const history = [
+      ...chatSession.messages.map(m => ({ role: m.role, content: m.content })),
+      { role: 'USER', content: userMessage }
+    ]
+    aiContent = await getGrowthPlanResponse(userMessage, locale, history)
+  } else {
+    aiContent = await getReflectionQuestions(userMessage, locale, userContext)
+  }
 
   await db.chatMessage.create({ data: { sessionId, role: 'ASSISTANT', content: aiContent } })
 

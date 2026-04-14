@@ -19,7 +19,7 @@ declare global {
 }
 
 type Message = { id: string; role: 'USER' | 'ASSISTANT'; content: string; createdAt?: Date | string }
-type Session = { id: string; messages: Message[] }
+type Session = { id: string; messages: Message[]; type?: string }
 
 export default function ChatWindow({
   session,
@@ -115,12 +115,18 @@ export default function ChatWindow({
     }
   }
 
-  const placeholder = locale === 'en' ? "Share what's on your mind..." : 'Partilha o que tens na mente...'
+  const isGrowth = session.type === 'GROWTH_PLAN'
+  const placeholder = isGrowth
+    ? (locale === 'en' ? 'Reply here...' : 'Responde aqui...')
+    : (locale === 'en' ? "Share what's on your mind..." : 'Partilha o que tens na mente...')
   const thinkingText = locale === 'en' ? 'Reflecting...' : 'A refletir...'
-  const emptyTitle = locale === 'en' ? 'Start your journey' : 'Começa a tua jornada'
-  const emptyDesc = locale === 'en'
-    ? 'Write a thought, obstacle or frustration.'
-    : 'Escreve um pensamento, obstáculo ou desabafo.'
+  const emptyTitle = isGrowth
+    ? (locale === 'en' ? 'Growth Plan' : 'Plano de Crescimento')
+    : (locale === 'en' ? 'Start your journey' : 'Começa a tua jornada')
+  const emptyDesc = isGrowth
+    ? (locale === 'en' ? 'Your coach will guide you step by step to build a personal growth plan.' : 'O teu coach vai guiar-te passo a passo para construir um plano de crescimento pessoal.')
+    : (locale === 'en' ? 'Write a thought, obstacle or frustration.' : 'Escreve um pensamento, obstáculo ou desabafo.')
+  const emptyEmoji = isGrowth ? '🌱' : '💭'
 
   return (
     <div className="flex flex-col h-full max-w-3xl mx-auto w-full">
@@ -128,7 +134,7 @@ export default function ChatWindow({
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center gap-4 pb-20">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-amber-500 flex items-center justify-center text-3xl">
-              💭
+              {emptyEmoji}
             </div>
             <h2 className="text-xl font-semibold text-slate-200">{emptyTitle}</h2>
             <p className="text-slate-400 max-w-sm text-sm">{emptyDesc}</p>
@@ -144,7 +150,10 @@ export default function ChatWindow({
             )}>
               {msg.role === 'ASSISTANT' && (
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-amber-400 text-xs font-semibold uppercase tracking-wider">OutOfBox</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-amber-400 text-xs font-semibold uppercase tracking-wider">OutOfBox</span>
+                    {isGrowth && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-900/40 text-emerald-400 font-medium">Crescimento</span>}
+                  </div>
                   <button
                     onClick={() => toggleSpeak(msg.id, msg.content)}
                     className="text-slate-500 hover:text-amber-400 transition ml-3"
