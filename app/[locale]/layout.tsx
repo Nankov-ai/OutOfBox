@@ -4,6 +4,7 @@ import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { Inter } from 'next/font/google'
 import type { Metadata } from 'next'
+import AiBanner from '@/components/AiBanner'
 
 const inter = Inter({ subsets: ['latin'] })
 const locales = ['pt', 'en']
@@ -27,6 +28,7 @@ export default async function LocaleLayout({
     <html lang={locale} className="dark">
       <body className={`${inter.className} bg-[#0A0F1E] text-slate-100 antialiased`}>
         <NextIntlClientProvider messages={messages}>
+          <AiBanner />
           {children}
         </NextIntlClientProvider>
       </body>
