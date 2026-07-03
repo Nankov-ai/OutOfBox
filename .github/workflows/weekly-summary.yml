@@ -3,6 +3,7 @@ name: Weekly Summary
 on:
   schedule:
     - cron: '0 8 * * 1'  # Every Monday at 8am UTC
+    - cron: '0 8 * * 4'  # Every Thursday at 8am UTC
   workflow_dispatch:      # Allow manual trigger
 
 jobs:
