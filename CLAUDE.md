@@ -49,6 +49,10 @@ Variáveis de ambiente obrigatórias no Render:
 
 Build command: `npm install && npx prisma generate && npm run build`
 
+**⚠️ O Render faz deploy a partir da branch `main`, não `master`.** Confirmado em 2026-08-03: `main` esteve 19 commits atrasado durante meses (só tinha o commit de setup inicial do projeto), por isso o Render continuava a servir uma versão muito antiga da app mesmo depois de vários pushes para `master`. Sempre que fizeres push de trabalho novo, garante que `main` também é atualizado (`git checkout main && git merge master && git push origin main`) — ou considera mudar a branch de deploy do Render para `master` nas Settings do serviço para evitar este passo manual.
+
+**⚠️ Nunca uses `prisma db push` neste projeto — usa sempre `prisma migrate dev`.** Em 2026-08-03 descobriu-se que o campo `ChatSession.type` (enum `SessionType`) estava no `schema.prisma` mas não tinha migração nenhuma associada — foi provavelmente aplicado com `db push` em ambiente local e nunca ficou commitado como ficheiro de migração. Isto só rebentou (erro `P2022 ColumnNotFound`) quando `main` foi sincronizado com `master` e o Render passou a servir código que esperava essa coluna, inexistente na BD de produção. Depois de qualquer alteração ao `schema.prisma`, confirma sempre que existe um ficheiro novo em `prisma/migrations/` antes de fazer commit.
+
 ## Compliance — EU AI Act Art. 50
 
 `components/chat/ChatWindow.tsx` implementa a disclosure obrigatória de IA em dois níveis:
