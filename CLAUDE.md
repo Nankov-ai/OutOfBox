@@ -51,7 +51,11 @@ Build command: `npm install && npx prisma generate && npm run build`
 
 ## Compliance — EU AI Act Art. 50
 
-`components/chat/ChatWindow.tsx` mostra um banner dismissível (uma vez por sessão de browser, via `sessionStorage`) a avisar que o conteúdo é gerado por IA. Não remover sem substituir por outro mecanismo de disclosure equivalente.
+`components/chat/ChatWindow.tsx` implementa a disclosure obrigatória de IA em dois níveis:
+1. Banner de topo `sticky`, com destaque âmbar/aviso, mostrado uma vez por sessão de browser (`sessionStorage`), antes da primeira interação.
+2. Selo preto "GERADO POR IA" (inspirado no ícone oficial da UE — https://digital-strategy.ec.europa.eu/pt/policies/eu-icons-labelling-ai-generated-content) embutido em cada mensagem do assistente, sempre visível (não dismissível), para satisfazer o requisito de marcação directa do conteúdo.
+
+**Multas potenciais (AI Act):** até 15M€ ou 3% da faturação global para incumprimento de obrigações gerais de transparência. Não remover ou enfraquecer este aviso sem substituir por mecanismo equivalente. Ver skill `aiact` para detalhes de classificação de risco e obrigações.
 
 ## Autenticação
 
