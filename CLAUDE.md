@@ -52,10 +52,12 @@ Build command: `npm install && npx prisma generate && npm run build`
 ## Compliance — EU AI Act Art. 50
 
 `components/chat/ChatWindow.tsx` implementa a disclosure obrigatória de IA em dois níveis:
-1. Banner de topo `sticky`, com destaque âmbar/aviso, mostrado uma vez por sessão de browser (`sessionStorage`), antes da primeira interação.
-2. Selo preto "GERADO POR IA" (inspirado no ícone oficial da UE — https://digital-strategy.ec.europa.eu/pt/policies/eu-icons-labelling-ai-generated-content) embutido em cada mensagem do assistente, sempre visível (não dismissível), para satisfazer o requisito de marcação directa do conteúdo.
+1. Banner de topo `sticky`, com destaque âmbar/aviso, mostrado uma vez por sessão de browser (`sessionStorage`), antes da primeira interação. **Este é o mecanismo que efectivamente cumpre o Art. 50** (obrigação de informar que se interage com IA).
+2. Selo preto "GERADO POR IA" em cada mensagem do assistente (estilo inspirado no ícone oficial da UE — https://digital-strategy.ec.europa.eu/pt/policies/eu-icons-labelling-ai-generated-content), sempre visível, como reforço visual.
 
-**Multas potenciais (AI Act):** até 15M€ ou 3% da faturação global para incumprimento de obrigações gerais de transparência. Não remover ou enfraquecer este aviso sem substituir por mecanismo equivalente. Ver skill `aiact` para detalhes de classificação de risco e obrigações.
+**Nota importante:** os ícones oficiais da UE são uma ferramenta **opcional** (Art. 50.4), não uma obrigação legal — a obrigação é a divulgação em si. São formalmente exigidos sobretudo para deepfakes e texto publicado sem revisão humana/controlo editorial sobre assuntos de interesse público; um chatbot conversacional cumpre com o aviso textual. Não remover o selo tratando-o como "legalmente obrigatório" — é reforço, o banner é que cumpre a obrigação.
+
+**Multas potenciais (AI Act):** até 15M€ ou 3% da faturação global para incumprimento de obrigações gerais de transparência. Não remover ou enfraquecer o banner sem substituir por mecanismo equivalente. Ver skill `aiact` (secção 6.1) para detalhes.
 
 ## Autenticação
 
