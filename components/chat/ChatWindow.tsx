@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import { Send, Loader2, Mic, MicOff, Volume2, VolumeX } from 'lucide-react'
+import { Send, Loader2, Mic, MicOff, Volume2, VolumeX, Sparkles, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type SpeechRecognitionEvent = Event & { results: SpeechRecognitionResultList }
@@ -34,12 +34,22 @@ export default function ChatWindow({
   const [loading, setLoading] = useState(false)
   const [listening, setListening] = useState(false)
   const [speaking, setSpeaking] = useState<string | null>(null)
+  const [showAiNotice, setShowAiNotice] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
+
+  useEffect(() => {
+    if (!sessionStorage.getItem('oob-ai-notice-dismissed')) setShowAiNotice(true)
+  }, [])
+
+  function dismissAiNotice() {
+    sessionStorage.setItem('oob-ai-notice-dismissed', '1')
+    setShowAiNotice(false)
+  }
 
   // Speech-to-text
   function toggleMic() {
@@ -128,8 +138,25 @@ export default function ChatWindow({
     : (locale === 'en' ? 'Write a thought, obstacle or frustration.' : 'Escreve um pensamento, obstáculo ou desabafo.')
   const emptyEmoji = isGrowth ? '🌱' : '💭'
 
+  const aiNoticeText = locale === 'en'
+    ? 'This app uses generative AI (EU AI Act Art. 50). You are interacting with an AI system — content is suggestive and does not replace professional guidance.'
+    : 'Esta app utiliza IA generativa (EU AI Act Art. 50). Estás a interagir com um sistema de IA — o conteúdo gerado é sugestivo e não substitui acompanhamento profissional.'
+
   return (
     <div className="flex flex-col h-full max-w-3xl mx-auto w-full">
+      {showAiNotice && (
+        <div className="flex items-start gap-2 m-3 mb-0 rounded-xl border border-purple-800/50 bg-purple-950/40 px-3 py-2 text-xs text-purple-200">
+          <Sparkles size={14} className="shrink-0 mt-0.5 text-purple-400" />
+          <p className="flex-1 leading-relaxed">{aiNoticeText}</p>
+          <button
+            onClick={dismissAiNotice}
+            className="shrink-0 text-purple-400 hover:text-purple-200 transition"
+            aria-label={locale === 'en' ? 'Dismiss' : 'Dispensar'}
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center gap-4 pb-20">
