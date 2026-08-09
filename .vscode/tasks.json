@@ -1,0 +1,46 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "graphify: check knowledge graph",
+      "type": "shell",
+      "command": "if [ -f graphify-out/graph.json ]; then echo '✅ graphify graph exists — use: graphify query \"<pergunta>\"'; else echo '⚠️  graphify graph não gerado. Corre: graphify .'; fi",
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "graphify: gerar grafo",
+      "type": "shell",
+      "command": "graphify .",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "graphify: atualizar grafo",
+      "type": "shell",
+      "command": "graphify update .",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
